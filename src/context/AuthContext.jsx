@@ -2,8 +2,8 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import {
   registerRequest,
   loginRequest,
-  verifyTokenRequest,
-  logoutRequest
+  verifyTokenRequest
+  // logoutRequest
 } from '../api/auth.js'
 
 import Cookies from 'js-cookie'
@@ -49,8 +49,15 @@ export const AuthProvide = ({ children }) => {
   const signIn = async (user) => {
     try {
       const res = await loginRequest(user)
-      setUser(res.data)
+      setUser(res.data.user)
       setIsAuthenticated(true)
+
+      // ✅ Guarda el token
+      Cookies.set('access_token', res.data.token, {
+        secure: true,
+        sameSite: 'None',
+        expires: 1 // 1 día
+      })
     } catch (error) {
       const msjDeError =
         error?.response?.data?.error || 'Ocurrio un error inesperado'
@@ -61,7 +68,7 @@ export const AuthProvide = ({ children }) => {
 
   const signOut = async () => {
     try {
-      await logoutRequest()
+      Cookies.remove('access_token') // ✅ borrar el token
       setUser(null)
       setIsAuthenticated(false)
     } catch (error) {
