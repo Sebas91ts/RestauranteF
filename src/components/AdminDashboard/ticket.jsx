@@ -522,7 +522,7 @@ export default function TicketAdmin() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='rounded-md border overflow-y-auto max-h-[200px] custom-scrollbar'>
+            <div className='rounded-md border overflow-y-auto max-h-[160px] custom-scrollbar'>
               <Table>
                 <TableHeader>
                   <TableRow>
