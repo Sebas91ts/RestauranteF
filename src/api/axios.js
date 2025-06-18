@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instancia = axios.create({
-  baseURL:'https://restaurante-jbe5.onrender.com',
+  baseURL:'https://restauranteb.onrender.com',
   withCredentials: true
 })
 
