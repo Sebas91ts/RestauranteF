@@ -1,8 +1,13 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { registerRequest, loginRequest, verifyTokenRequest, logoutRequest } from "../api/auth.js";
+import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  registerRequest,
+  loginRequest,
+  verifyTokenRequest,
+  logoutRequest
+} from '../api/auth.js'
 
 import Cookies from 'js-cookie'
-import { actualizarPerfil } from "@/api/cliente/actualizarPerfil.js";
+import { actualizarPerfil } from '@/api/cliente/actualizarPerfil.js'
 
 const AuthContext = createContext()
 
@@ -11,33 +16,32 @@ const AuthContext = createContext()
 function useAuth() {
   const context = useContext(AuthContext)
   if (!context) {
-    throw new Error("useAuth deberia estar dentro de un AuthProvider");
+    throw new Error('useAuth deberia estar dentro de un AuthProvider')
   }
   return context
 }
 
-export { useAuth };
+export { useAuth }
 
 // para guardar el contexto del usuario y poder ocupar sus datos
 // otras paginas
 export const AuthProvide = ({ children }) => {
-
   const [user, setUser] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [errors, setErrors] = useState([])
   const [isLoading, setLoading] = useState(true)
 
-
   const signUp = async (user) => {
     try {
       //paso 1
-      const res = await registerRequest(user);
+      const res = await registerRequest(user)
       setUser(res.data)
       //paso 2
       setIsAuthenticated(true)
     } catch (error) {
       //paso 3
-      const msjDeError = error?.response?.data?.error || "Ocurrio un error inesperado"
+      const msjDeError =
+        error?.response?.data?.error || 'Ocurrio un error inesperado'
       setErrors([{ msg: msjDeError }])
     }
   }
@@ -48,7 +52,8 @@ export const AuthProvide = ({ children }) => {
       setUser(res.data)
       setIsAuthenticated(true)
     } catch (error) {
-      const msjDeError = error?.response?.data?.error || "Ocurrio un error inesperado"
+      const msjDeError =
+        error?.response?.data?.error || 'Ocurrio un error inesperado'
       setErrors([{ msg: msjDeError }])
       console.log(error)
     }
@@ -60,7 +65,7 @@ export const AuthProvide = ({ children }) => {
       setUser(null)
       setIsAuthenticated(false)
     } catch (error) {
-      setErrors([{ msg: "Error al cerrar sesión" }])
+      setErrors([{ msg: 'Error al cerrar sesión' }])
       console.log(error)
     }
   }
@@ -69,25 +74,26 @@ export const AuthProvide = ({ children }) => {
     try {
       const res = await actualizarPerfil(id, user)
       if (!res.data) {
-        throw new Error("No se recibieron datos en la respuesta")
+        throw new Error('No se recibieron datos en la respuesta')
       }
       setUser(res.data)
-      setIsAuthenticated(true);
+      setIsAuthenticated(true)
       return { success: true, data: res.data }
     } catch (error) {
-      const msjDeError = error?.response?.data?.error || "Ocurrio un error inesperado"
+      const msjDeError =
+        error?.response?.data?.error || 'Ocurrio un error inesperado'
       setErrors([{ msg: msjDeError }])
     }
   }
 
   const reloadUser = async () => {
     try {
-      const res = await verifyTokenRequest();
-      setUser(res.data);
+      const res = await verifyTokenRequest()
+      setUser(res.data)
     } catch (error) {
-      console.error("Error recargando usuario:", error);
+      console.error('Error recargando usuario:', error)
     }
-  };
+  }
 
   //para eliminar los errores que aparecen en el form
   useEffect(() => {
@@ -101,46 +107,41 @@ export const AuthProvide = ({ children }) => {
   //para guardar la cookie con js-cookie
   useEffect(() => {
     async function checkLogin() {
-      const cookies = Cookies.get()
-
-      if (!cookies.access_token) {
-        setIsAuthenticated(false)
-        setLoading(false)
-        return setUser(null)
-      }
       try {
-        const res = await verifyTokenRequest(cookies.access_token)
+        const res = await verifyTokenRequest() // No le pases token, axios ya lo manda
         if (!res.data) {
-          setLoading(false)
-          return setIsAuthenticated(false)
+          setIsAuthenticated(false)
+          setUser(null)
+        } else {
+          setIsAuthenticated(true)
+          setUser(res.data)
         }
-        setIsAuthenticated(true)
-        setUser(res.data)
-        setLoading(false)
-      }
-      catch (error) {
+      } catch (error) {
         setIsAuthenticated(false)
         setUser(null)
+        console.error('Error validando sesión:', error)
+      } finally {
         setLoading(false)
-        console.log(error)
       }
     }
+
     checkLogin()
-  }, [user])
+  }, [])
 
   return (
-    <AuthContext.Provider value={{
-      signUp,
-      signIn,
-      signOut,
-      editarUsuario,
-      reloadUser,
-      user,
-      isAuthenticated,
-      isLoading,
-      errors,
-
-    }}>
+    <AuthContext.Provider
+      value={{
+        signUp,
+        signIn,
+        signOut,
+        editarUsuario,
+        reloadUser,
+        user,
+        isAuthenticated,
+        isLoading,
+        errors
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
