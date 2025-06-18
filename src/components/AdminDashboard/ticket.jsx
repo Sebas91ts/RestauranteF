@@ -245,15 +245,15 @@ export default function TicketAdmin() {
           <span>${ticket.metodoDePago || 'No especificado'}</span>
         </div>
         ${ticket.detalles
-        ?.map(
-          (d) => `
+          ?.map(
+            (d) => `
         <div class="ticket-info">
           <span>${d.cantidad} x ${d.producto}</span>
           <span>$${parseFloat(d.subtotal).toFixed(2)}</span>
         </div>
         `
-        )
-        .join('')}
+          )
+          .join('')}
         <div class="ticket-total">
           TOTAL: $${parseFloat(ticket.monto).toFixed(2)}
         </div>
@@ -522,7 +522,7 @@ export default function TicketAdmin() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='rounded-md border overflow-y-auto max-h-[350px] custom-scrollbar'>
+            <div className='rounded-md border overflow-y-auto max-h-[200px] custom-scrollbar'>
               <Table>
                 <TableHeader>
                   <TableRow>
