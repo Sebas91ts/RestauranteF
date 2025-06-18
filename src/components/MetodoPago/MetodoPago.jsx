@@ -10,9 +10,23 @@ export function MetodoPago({ onSuccess, productos }) {
   const stripe = useStripe();
   const elements = useElements();
 
+  const opciones = {
+    timeZone: 'America/La_Paz',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false // Formato 24 horas
+  };
+
+  const fechaBoliviana = new Date().toLocaleString('es-BO', opciones);
+  console.log(fechaBoliviana.split(',')[0]); // Muestra la fecha en formato dd/mm/yyyy
+  console.log(fechaBoliviana.split(',')[1]); // Muestra la hora en formato hh:mm:ss
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
 
     if (!stripe || !elements) {
       return;

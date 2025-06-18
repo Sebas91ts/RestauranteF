@@ -16,6 +16,7 @@ export function Header({ isAuthenticated, user, signOut }) {
     { to: "/", label: "Menú" },
     { to: "/reservar", label: "Reservar" },
     { to: "/contacto", label: "Contacto" },
+    { to: "/verificar", label: "Verificar" }
   ]
 
   return (

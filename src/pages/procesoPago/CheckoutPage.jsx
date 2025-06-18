@@ -8,14 +8,30 @@ import { toast } from 'sonner';
 // import stripePromise from 'stripe';
 import { Elements } from '@stripe/react-stripe-js';
 import { stripePromise } from '@/stripe';
+import { useAuth } from '@/context/AuthContext';
+import { registrarPedidoDomicilio } from '@/api/pedido';
 
 export default function CheckoutPage() {
   const { cart, total, limpiarCarrito } = useCart();
-
+  const { user } = useAuth();
 
   const handlePaymentSuccess = async () => {
-    // Aquí puedes manejar la lógica después de un pago exitoso
-    // Por ejemplo, limpiar el carrito y redirigir al usuario
+    try {
+      const producto = cart.map(item => ({
+        id: item.id,
+        precio: item.precio,
+        cantidad: item.quantity,
+        exclusiones: []
+      }))
+      console.log(user.user.id)
+      console.log(producto)
+      await registrarPedidoDomicilio(user.user.id, "D", producto);
+    } catch (error) {
+      console.error('Error al procesar el pago:', error);
+      toast.error('Error al procesar el pago. Inténtalo de nuevo más tarde.');
+      return;
+
+    }
     toast.success('Pago realizado con éxito');
     limpiarCarrito();
     // Redirigir a una página de confirmación o éxito
